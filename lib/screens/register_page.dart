@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trippo_mobile_app/global/global.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:trippo_mobile_app/screens/main_screen.dart';
+import 'package:trippo_mobile_app/screens/login_page.dart';
 import 'package:trippo_mobile_app/screens/forget_password_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -52,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
         await Fluttertoast.showToast(msg: "Successfully Logged In");
         Navigator.push(
-            context, MaterialPageRoute(builder: (c) => MainScreen()));
+            context, MaterialPageRoute(builder: (c) => LoginPage()));
       }).catchError((errorMessage){
         Fluttertoast.showToast(msg: 'Error occures:\n $errorMessage');
         return "Enter valid credentials";

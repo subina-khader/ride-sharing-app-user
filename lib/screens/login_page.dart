@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:trippo_mobile_app/screens/main_screen.dart';
 import 'package:trippo_mobile_app/screens/forget_password_screen.dart';
 import 'package:trippo_mobile_app/screens/register_page.dart';
+import 'package:trippo_mobile_app/models/user_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,20 +32,35 @@ class _LoginPageState extends State<LoginPage> {
           password: passwordTextEditingController.text.trim()
       ).then((auth) async {
         currentUser = auth.user;
-        Fluttertoast.showToast(msg: 'Successfully Logged In');
-        Navigator.push(context, MaterialPageRoute(builder: (c) => MainScreen()));
-      }
-      ).catchError((errorMessage) {
+
+        // ✅ NEW: Load user data from Firebase
+        if (currentUser != null) {
+          DatabaseReference userRef = FirebaseDatabase.instance
+              .ref()
+              .child("users")
+              .child(currentUser!.uid);
+
+          DatabaseEvent event = await userRef.once();
+
+          if (event.snapshot.value != null) {
+            userModelCurrentInfo = UserModel.fromSnapshot(event.snapshot);
+            print("✅ User data loaded: ${userModelCurrentInfo!.name}");
+            print("✅ Phone: ${userModelCurrentInfo!.phone}");
+
+            Fluttertoast.showToast(msg: 'Successfully Logged In');
+            Navigator.push(context, MaterialPageRoute(builder: (c) => MainScreen()));
+          } else {
+            print("❌ User data not found in Firebase");
+            Fluttertoast.showToast(msg: 'User data not found. Please register again.');
+          }
+        }
+      }).catchError((errorMessage) {
         Fluttertoast.showToast(msg: "Error occures:\n $errorMessage");
-      }
-
-      );
+      });
     }
-    else
-  {
-    Fluttertoast.showToast(msg: "Not all field are valid");
-
-  }
+    else {
+      Fluttertoast.showToast(msg: "Not all field are valid");
+    }
   }
 
   @override
@@ -163,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                             return "Enter a valid Password";
                           }
                           if (text.length < 6) {
-                            return "Password can't be less than 656";
+                            return "Password can't be less than 6";
                           }
                           if (text.length > 9) {
                             return "Password can't be more than 10";

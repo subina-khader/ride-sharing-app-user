@@ -24,9 +24,9 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
     final url =
         "https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=5";
     final response = await http.get(Uri.parse(url), headers: {
-      'User-Agent': 'trippo_mobile_app/1.0 (your_email@example.com)'
+      'User-Agent': 'trippo_mobile_app/1.0 (subinakhaderbs@gmail.com)'
     });
-    if (!mounted) return; // ⛔ prevent setState after dispose
+    // if (!mounted) return; // ⛔ prevent setState after dispose
 
     if (response.statusCode == 200) {
       results = List<Map<String, dynamic>>.from(jsonDecode(response.body));
